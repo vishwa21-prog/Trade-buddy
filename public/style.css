@@ -8,3 +8,43 @@
 .live-chat{position:fixed;right:20px;bottom:20px;width:310px;height:390px;display:flex;flex-direction:column;background:#fff;border:1px solid #e9e2f7;border-radius:18px;box-shadow:0 12px 40px #4b328c29;overflow:hidden;z-index:100}.live-chat[hidden]{display:none}.chat-header{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:15px;background:#7855da;color:white;font-size:14px;font-weight:800}.chat-live{color:#baffcf;font-size:10px;margin-left:auto}.chat-header button{background:#ffffff25;color:white;border:0;border-radius:6px;font-size:19px;width:25px;height:25px}.chat-body{flex:1;display:flex;flex-direction:column;min-height:0}.chat-messages{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:10px}.chat-welcome{text-align:center;color:#9b92ad;font-size:12px;margin:15px 0}.chat-bubble{max-width:85%;padding:10px 12px;border-radius:13px;background:#f1edfa;align-self:flex-start;overflow-wrap:anywhere}.chat-bubble.mine{align-self:flex-end;background:#7855da;color:white}.chat-name{font-size:10px;font-weight:800;margin-bottom:4px;opacity:.75}.chat-text{font-size:13px;line-height:1.45}.chat-form{display:flex;gap:8px;padding:12px;border-top:1px solid #eeeaf5}.chat-form input{flex:1;min-width:0;border:1px solid #e4dff0;border-radius:10px;padding:10px;outline-color:#7855da}.chat-form button{border:0;background:#7855da;color:white;border-radius:10px;width:40px;font-size:18px}.live-chat.minimized{height:auto}.live-chat.minimized .chat-body{display:none}
 @media(max-width:650px){.live-chat{position:relative;right:auto;bottom:auto;width:100%;height:300px;margin:20px auto}.trade-toast{top:70px;min-width:0;width:calc(100vw - 32px)}}
 @media(prefers-reduced-motion:reduce){.trade-toast{transition:none}.toast-icon{animation:none}}
+
+/* FUNKY ARCADE MAKEOVER — mascot art can be added later */
+:root{font-family:'Trebuchet MS',Verdana,system-ui,sans-serif;color:#292044;background:#ffedb8}
+body{background:radial-gradient(circle at 8% 16%,#ff8ac6 0 6%,transparent 6.5%),radial-gradient(circle at 90% 20%,#83f0d0 0 8%,transparent 8.5%),repeating-linear-gradient(135deg,#fff1bd 0 26px,#ffe9b3 26px 52px);min-height:100vh}
+header{background:#fdf7ff;border-bottom:4px solid #30204b;box-shadow:0 5px 0 #ff74ae}
+.brand{font-family:Impact,'Arial Black',sans-serif;letter-spacing:1.5px;color:#6b36d8;font-size:29px;text-shadow:2px 2px 0 #ffc3e2}
+.brand-pop{display:inline-block;animation:wiggle 2.5s infinite}
+h1,h2,.actionlabel{font-family:Impact,'Arial Black',sans-serif;letter-spacing:.8px}
+.topline h1{font-size:36px;color:#33205c;text-shadow:3px 3px 0 #ff7db4}
+.join{background:#fffdf7;border:4px solid #2e204c;border-radius:28px;box-shadow:9px 9px 0 #8a5aee;transform:rotate(-1deg)}
+.join h1{font-size:39px;color:#713be3;text-shadow:3px 3px 0 #ffc1d6}
+.joinicon{font-size:56px;animation:bob 2s ease-in-out infinite}
+.primary,.outline,.actionbuttons button{border:3px solid #30204b;box-shadow:4px 5px 0 #30204b;transition:transform .15s,box-shadow .15s}
+.primary:hover,.outline:hover,.actionbuttons button:not(:disabled):hover{transform:translate(-2px,-3px) rotate(-2deg);box-shadow:6px 8px 0 #30204b}
+.primary:active,.outline:active,.actionbuttons button:not(:disabled):active{transform:translate(3px,3px);box-shadow:1px 1px 0 #30204b}
+.primary{background:#ff6fae;color:#292044;font-weight:900}
+.roomtag{background:#fce468;border:2px solid #30204b;color:#30204b}
+.notice{background:#fff9ed;border:2px dashed #b9a1e2;color:#6b518c}
+.turn-banner{display:flex;align-items:center;justify-content:center;gap:14px;text-align:center;padding:17px;margin:18px 0 12px;background:#c7b8ff;border:4px solid #30204b;border-radius:20px;box-shadow:6px 6px 0 #30204b;color:#30204b;font-size:20px;letter-spacing:1px;transform:rotate(-.4deg)}
+.turn-banner.your-turn{background:#fff06c;animation:bannerPop 1.5s ease-in-out infinite alternate}
+#turnEmoji{font-size:30px}.turn-spark{font-size:18px}
+.cart,.side,.actions{border:3px solid #30204b;border-radius:22px;background:#fffdfb;box-shadow:6px 6px 0 #30204b}
+.side{transition:transform .25s,box-shadow .25s,background .25s,outline-color .25s}
+.side.active-turn{background:#fffbe1;outline:5px solid #ff5caa;outline-offset:3px;box-shadow:8px 8px 0 #30204b,0 0 28px #ff66b655;transform:translateY(-3px)}
+.side.active-turn .sidehead:after{content:'⚡ TURN!';font-family:Impact,sans-serif;background:#ff5caa;color:#2d2047;border:2px solid #2d2047;border-radius:8px;padding:4px 6px;transform:rotate(6deg);font-size:11px}
+.drop{border:3px dashed #8b61e2;background:#f4eaff}
+.drop.drag{background:#ffe0ee}
+.offer{display:block;border:2px solid #30204b;background:white;box-shadow:3px 3px 0 #30204b}
+.offer img{height:200px}
+.actionlabel{font-size:21px;color:#4e298c}
+.actionbuttons .accept{background:#8bf3ba;color:#1d4939}.actionbuttons .more{background:#ffdc6c;color:#5e411a}.actionbuttons .reject{background:#ff9eaf;color:#6d2539}
+.actionbuttons button:disabled{box-shadow:none;filter:grayscale(.5)}
+.chat-header{background:#6838d3}.live-chat{border:3px solid #30204b;box-shadow:6px 6px 0 #30204b}.chat-form button{background:#ff6fae;color:#30204b}
+.trade-toast{border:4px solid #30204b;background:#fff2a6;box-shadow:8px 9px 0 #30204b;min-width:320px;transform:translate(-50%,-50px) rotate(-8deg) scale(.6);transition:opacity .2s,transform .45s cubic-bezier(.2,1.7,.5,1)}
+.trade-toast.show{transform:translate(-50%,0) rotate(2deg) scale(1)}
+.toast-icon{font-size:44px}.toast-kicker{font-family:Impact,'Arial Black',sans-serif;font-size:12px;color:#b0378c;letter-spacing:2px}.toast-message{font-size:17px;font-weight:900}
+.trade-toast.accept{background:#b4ffd1;border-color:#30204b}.trade-toast.more{background:#e3c3ff;border-color:#30204b}.trade-toast.reject{background:#ffbac8;border-color:#30204b}.trade-toast.success{background:#fff071;border-color:#30204b}
+@keyframes bob{50%{transform:translateY(-8px) rotate(8deg)}}@keyframes wiggle{0%,90%,100%{transform:rotate(0)}94%{transform:rotate(-16deg)}97%{transform:rotate(15deg)}}@keyframes bannerPop{to{transform:rotate(.6deg) scale(1.015);box-shadow:8px 9px 0 #30204b}}
+@media(max-width:650px){.topline h1{font-size:24px}.brand{font-size:22px}.turn-banner{font-size:13px;padding:12px 6px;gap:6px}.turn-spark{display:none}.side.active-turn .sidehead:after{font-size:8px;padding:2px}.offer img{height:130px}.trade-toast{min-width:0}.actionlabel{font-size:17px}}
+@media(prefers-reduced-motion:reduce){.turn-banner.your-turn,.joinicon,.brand-pop{animation:none}}
