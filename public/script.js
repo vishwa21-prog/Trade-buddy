@@ -15,11 +15,15 @@ function action(a){if(mySlot!==null)socket.emit('action',a)}
 ['accept','more','reject'].forEach(a=>$(a).onclick=()=>action(a));
 function offerHTML(item,slot){
  const mine=slot===mySlot;
- return `<div class="offer"><div><img src="${item.image}" alt="${escapeHTML(item.name)}"><div class="itemname">${escapeHTML(item.name)}</div>${mine?`<button class="remove" data-remove="${item.id}">Remove</button>`:''}</div><div class="vertical"><button class="accept" data-action="accept" title="Accept" ${!latest?.players[1]||!latest?.players[0]?'disabled':''}>✓</button><button class="more" data-action="more" title="Ask for one more" ${!latest?.players[1]||!latest?.players[0]?'disabled':''}>+</button><button class="reject" data-action="reject" title="Reject" ${!latest?.players[1]||!latest?.players[0]?'disabled':''}>×</button></div></div>`;
+ return `<div class="offer"><div><img src="${item.image}" alt="${escapeHTML(item.name)}"><div class="itemname">${escapeHTML(item.name)}</div>${mine?`<button class="remove" data-remove="${item.id}">Remove</button>`:''}</div></div>`;
 }
 socket.on('state',state=>{
  latest=state;
  const both=state.players.every(Boolean), hasOffers=state.offers.every(a=>a.length>0);
+ const myTurn=both&&state.turn===mySlot;
+ $('turnEmoji').textContent=!both?'🎲':myTurn?'🔥':'👀';
+ $('turnLabel').textContent=!both?'WAITING FOR YOUR BUDDY':myTurn?'YOUR TURN! MAKE A MOVE':(state.players[state.turn]?.name||'Your buddy').toUpperCase()+\"'S TURN!\";
+ $('turnBanner').classList.toggle('your-turn',myTurn);
  $('status').textContent=both?'Both players connected 🟢':'Waiting for your friend to join…';
  $('notice').textContent=state.notice||'Add an item to begin trading.';
  if(state.request===mySlot)$('notice').textContent='Your friend requests another item. Add one or reject the trade.';
@@ -28,15 +32,16 @@ socket.on('state',state=>{
   $('ready'+i).textContent=state.accepted[i]?'✓ Accepted':state.players[i]?'Online':'Waiting';
   $('ready'+i).classList.toggle('yes',!!state.accepted[i]);
   $('drop'+i).classList.toggle('disabled',i!==mySlot);
+  $('side'+i).classList.toggle('active-turn',both&&state.turn===i);
   $('offer'+i).innerHTML=state.offers[i].map(item=>offerHTML(item,i)).join('')||'<div class="empty">No items offered yet</div>';
  }
  const cart=state.players[mySlot]?.cart||[];
  $('cartCount').textContent=cart.length;
  $('cartItems').innerHTML=cart.length?cart.map(item=>`<button class="cartitem" data-reuse="${item.id}" title="Add to your offer"><img src="${item.image}" alt=""><span>${escapeHTML(item.name)}<br><small>Tap to trade again ↗</small></span></button>`).join(''):'<div class="empty">No items yet</div>';
- $('accept').disabled=!both||!hasOffers;
- $('more').disabled=!both||!state.offers.some(a=>a.length);
- $('reject').disabled=!both||!state.offers.some(a=>a.length);
- $('hint').textContent=!both?'Share your room code with your friend.':!hasOffers?'Both players need to offer at least one item.':'Both players must accept the same offer to complete the trade.';
+ $('accept').disabled=!myTurn||!hasOffers||state.accepted[mySlot];
+ $('more').disabled=!myTurn||!state.offers.some(a=>a.length);
+ $('reject').disabled=!myTurn||!state.offers.some(a=>a.length);
+ $('hint').textContent=!both?'Share your room code with your friend.':!hasOffers?'Both players need to offer at least one item.':myTurn?'Your move! Accept, ask for more, or reject.':'Watch your buddy make their move!';
 });
 document.addEventListener('click',e=>{
  const a=e.target.closest('[data-action]');if(a){action(a.dataset.action);return;}
