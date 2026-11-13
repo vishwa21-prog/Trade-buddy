@@ -48,19 +48,32 @@ io.on('connection', s => {
  });
  s.on('action', a => {
   const [r,i]=getRoom(s);if(!r||!r.players[0]||!r.players[1])return;
-  if(a==='reject'){returnOffers(r);r.notice=`${r.players[i].name} cancelled the trade`;}
-  else if(a==='more') {reset(r);r.request=1-i;r.notice=`${r.players[i].name} requests another item`;}
-  else if(a==='accept') {
-   if(!r.offers[0].length||!r.offers[1].length)return;
-   r.accepted[i]=true;r.request=null;r.notice=`${r.players[i].name} accepted the offer`;
+  const name=r.players[i].name;
+  let type,message,completed=false;
+  if(a==='reject'){
+   if(!r.offers.some(items=>items.length))return;
+   returnOffers(r);type='reject';message=`${name} rejected the trade`;r.notice=message;
+  }else if(a==='more'){
+   if(!r.offers.some(items=>items.length))return;
+   reset(r);r.request=1-i;type='more';message=`${name} requested another item`;r.notice=message;
+  }else if(a==='accept'){
+   if(!r.offers[0].length||!r.offers[1].length||r.accepted[i])return;
+   r.accepted[i]=true;r.request=null;type='accept';message=`${name} accepted the trade`;r.notice=message;
    if(r.accepted.every(Boolean)){
     const left=r.offers[0],right=r.offers[1];
     r.players[0].cart.push(...right.map(x=>({...x,fromCart:true})));
     r.players[1].cart.push(...left.map(x=>({...x,fromCart:true})));
-    r.offers=[[],[]];reset(r);r.notice='Trade complete! Items moved to your carts 🎉';
+    r.offers=[[],[]];reset(r);r.notice='Trade complete! Items moved to your carts 🎉';completed=true;
    }
-  } else return;
+  }else return;
+  io.to(r.code).emit('tradeEvent',{type,message});
+  if(completed)io.to(r.code).emit('tradeEvent',{type:'success',message:'Trade completed! 🎉'});
   emit(r);
+ });
+ s.on('chat', message => {
+  const [r,i]=getRoom(s);if(!r)return;
+  const text=String(message||'').trim().slice(0,300);if(!text)return;
+  io.to(r.code).emit('chat',{name:r.players[i].name,slot:i,text,time:Date.now()});
  });
  s.on('disconnect', () => {
   const [r,i]=getRoom(s);if(!r)return;
