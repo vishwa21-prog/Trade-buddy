@@ -8,4 +8,11 @@
 <div class="middle">⇄</div>
 <div class="side"><div class="sidehead"><h2 id="p1">Player 2</h2><span id="ready1" class="ready"></span></div><div id="drop1" class="drop"><span class="uploadicon">＋</span><strong>Drop image here</strong><small>or tap to upload</small><input id="file1" type="file" accept="image/*" hidden></div><div id="offer1" class="offers"></div></div></div></div>
 <div class="actions"><div class="actionlabel">Your decision</div><div class="actionbuttons"><button id="accept" class="accept" title="Accept trade">✓ <span>Accept</span></button><button id="more" class="more" title="Ask for another item">+ <span>One more</span></button><button id="reject" class="reject" title="Cancel trade">× <span>Reject</span></button></div><p id="hint">Add images on both sides to begin.</p></div>
-</section></main><script src="/socket.io/socket.io.js"></script><script src="/script.js"></script></body></html>
+</section></main>
+<div id="tradeToast" class="trade-toast" role="status" aria-live="polite"><div id="toastIcon" class="toast-icon"></div><div id="toastMessage" class="toast-message"></div></div>
+<section id="liveChat" class="live-chat" hidden>
+ <div class="chat-header"><span>💬 Live Chat</span><span class="chat-live">● LIVE</span><button id="chatToggle" type="button" aria-label="Minimize chat" title="Minimize chat">−</button></div>
+ <div id="chatBody" class="chat-body"><div id="chatMessages" class="chat-messages"><div class="chat-welcome">Say something to your trade buddy 👋</div></div>
+ <form id="chatForm" class="chat-form"><input id="chatInput" type="text" placeholder="Type a message..." maxlength="300" autocomplete="off" required><button type="submit" aria-label="Send message">➤</button></form></div>
+</section>
+<script src="/socket.io/socket.io.js"></script><script src="/script.js"></script></body></html>
