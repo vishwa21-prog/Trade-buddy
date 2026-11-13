@@ -6,7 +6,7 @@ $('joinForm').addEventListener('submit',e=>{
  e.preventDefault();
  socket.emit('join',{room:$('room').value,name:$('name').value},res=>{
   if(res.error)return alert(res.error);
-  mySlot=res.slot;roomCode=res.room;
+  mySlot=res.slot;roomCode=res.room;$('liveChat').hidden=false;
   $('join').hidden=true;$('game').hidden=false;$('roomTag').hidden=false;$('roomTag').textContent='Room '+roomCode;
  });
 });
@@ -64,3 +64,43 @@ for(let i=0;i<2;i++){
  drop.ondrop=e=>{if(mySlot!==i)return;e.preventDefault();drop.classList.remove('drag');upload(e.dataTransfer.files[0])};
 }
 socket.on('disconnect',()=>{if(mySlot!==null){$('status').textContent='Disconnected. Refresh to reconnect.';$('notice').textContent='Connection lost. Refresh the page to join again.'}});
+
+let toastTimer;
+const toastQueue=[];
+let toastBusy=false;
+function showNextToast(){
+ if(!toastQueue.length){toastBusy=false;return}
+ toastBusy=true;
+ const data=toastQueue.shift(),toast=$('tradeToast');
+ const icons={accept:'✅',more:'🎁',reject:'❌',success:'🎉'};
+ toast.className='trade-toast';
+ $('toastIcon').textContent=icons[data.type]||'🔔';
+ $('toastMessage').textContent=data.message;
+ void toast.offsetWidth;
+ toast.classList.add(data.type,'show');
+ clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>{toast.classList.remove('show');setTimeout(showNextToast,350)},2600);
+}
+socket.on('tradeEvent',data=>{toastQueue.push(data);if(!toastBusy)showNextToast()});
+$('chatForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const message=$('chatInput').value.trim();
+ if(!message||mySlot===null||!socket.connected)return;
+ socket.emit('chat',message);
+ $('chatInput').value='';
+});
+socket.on('chat',data=>{
+ const bubble=document.createElement('div');
+ bubble.className='chat-bubble'+(data.slot===mySlot?' mine':'');
+ const name=document.createElement('div');
+ name.className='chat-name';name.textContent=data.slot===mySlot?'You':data.name;
+ const msg=document.createElement('div');
+ msg.className='chat-text';msg.textContent=data.text;
+ bubble.append(name,msg);$('chatMessages').appendChild(bubble);
+ $('chatMessages').scrollTop=$('chatMessages').scrollHeight;
+});
+$('chatToggle').onclick=()=>{
+ const minimized=$('liveChat').classList.toggle('minimized');
+ $('chatToggle').textContent=minimized?'+':'−';
+ $('chatToggle').setAttribute('aria-label',minimized?'Expand chat':'Minimize chat');
+};
