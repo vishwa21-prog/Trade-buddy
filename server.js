@@ -9,7 +9,7 @@ app.use(express.static('public'));
 app.get('/health', (_, res) => res.json({ ok: true }));
 const rooms = new Map();
 const safe = x => String(x || '').trim().slice(0, 48);
-function snapshot(r) { return { players: r.players.map(p => p && ({name:p.name, online:!!p.sid, cart:p.cart})), offers:r.offers, accepted:r.accepted, request:r.request, notice:r.notice }; }
+function snapshot(r) { return { players: r.players.map(p => p && ({name:p.name, online:!!p.sid, cart:p.cart})), offers:r.offers, accepted:r.accepted, request:r.request, turn:r.turn, notice:r.notice }; }
 function emit(r) { io.to(r.code).emit('state', snapshot(r)); }
 function reset(r) { r.accepted=[false,false]; r.request=null; }
 function returnOffers(r) { r.offers.forEach((items,i) => items.forEach(item => { if(item.fromCart && r.players[i]) r.players[i].cart.push(item); })); r.offers=[[],[]]; reset(r); }
@@ -21,7 +21,7 @@ io.on('connection', s => {
   const name=safe(data.name) || 'Player';
   if(code.length<3) return reply({error:'Use a room code with at least 3 letters or numbers'});
   let r=rooms.get(code);
-  if(!r) {r={code,players:[null,null],offers:[[],[]],accepted:[false,false],request:null,notice:'Waiting for your friend…'};rooms.set(code,r);}
+  if(!r) {r={code,players:[null,null],offers:[[],[]],accepted:[false,false],request:null,turn:0,notice:'Waiting for your friend…'};rooms.set(code,r);}
   const slot=r.players.findIndex(p=>!p);
   if(slot===-1) return reply({error:'Room is full. Use another code.'});
   r.players[slot]={sid:s.id,name,cart:[]}; s.data.room=code; s.data.slot=slot; s.join(code);
@@ -47,23 +47,23 @@ io.on('connection', s => {
   reset(r);r.notice=`${r.players[i].name} removed an item`;emit(r);
  });
  s.on('action', a => {
-  const [r,i]=getRoom(s);if(!r||!r.players[0]||!r.players[1])return;
+  const [r,i]=getRoom(s);if(!r||!r.players[0]||!r.players[1]||r.turn!==i)return;
   const name=r.players[i].name;
   let type,message,completed=false;
   if(a==='reject'){
    if(!r.offers.some(items=>items.length))return;
-   returnOffers(r);type='reject';message=`${name} rejected the trade`;r.notice=message;
+   returnOffers(r);r.turn=1-i;type='reject';message=`${name} rejected the trade`;r.notice=message;
   }else if(a==='more'){
    if(!r.offers.some(items=>items.length))return;
-   reset(r);r.request=1-i;type='more';message=`${name} requested another item`;r.notice=message;
+   reset(r);r.request=1-i;r.turn=1-i;type='more';message=`${name} requested another item`;r.notice=message;
   }else if(a==='accept'){
    if(!r.offers[0].length||!r.offers[1].length||r.accepted[i])return;
-   r.accepted[i]=true;r.request=null;type='accept';message=`${name} accepted the trade`;r.notice=message;
+   r.accepted[i]=true;r.request=null;r.turn=1-i;type='accept';message=`${name} accepted the trade`;r.notice=message;
    if(r.accepted.every(Boolean)){
     const left=r.offers[0],right=r.offers[1];
     r.players[0].cart.push(...right.map(x=>({...x,fromCart:true})));
     r.players[1].cart.push(...left.map(x=>({...x,fromCart:true})));
-    r.offers=[[],[]];reset(r);r.notice='Trade complete! Items moved to your carts 🎉';completed=true;
+    r.offers=[[],[]];reset(r);r.turn=1-i;r.notice='Trade complete! Items moved to your carts 🎉';completed=true;
    }
   }else return;
   io.to(r.code).emit('tradeEvent',{type,message});
