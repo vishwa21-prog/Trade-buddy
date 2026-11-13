@@ -22,7 +22,7 @@ socket.on('state',state=>{
  const both=state.players.every(Boolean), hasOffers=state.offers.every(a=>a.length>0);
  const myTurn=both&&state.turn===mySlot;
  $('turnEmoji').textContent=!both?'🎲':myTurn?'🔥':'👀';
- $('turnLabel').textContent=!both?'WAITING FOR YOUR BUDDY':myTurn?'YOUR TURN! MAKE A MOVE':(state.players[state.turn]?.name||'Your buddy').toUpperCase()+\"'S TURN!\";
+ $('turnLabel').textContent=!both?'WAITING FOR YOUR BUDDY':myTurn?'YOUR TURN! MAKE A MOVE':(state.players[state.turn]?.name||'Your buddy').toUpperCase()+"'S TURN!";
  $('turnBanner').classList.toggle('your-turn',myTurn);
  $('status').textContent=both?'Both players connected 🟢':'Waiting for your friend to join…';
  $('notice').textContent=state.notice||'Add an item to begin trading.';
